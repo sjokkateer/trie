@@ -4,11 +4,20 @@ namespace Sjokkateer\Trie;
 
 class RootNode
 {
+    private static int $id = 0;
+
+    private int $nodeId;
     private array $nodes;
 
     public function __construct()
     {
+        $this->nodeId = static::$id++;
         $this->nodes = [];
+    }
+
+    public function getId(): int
+    {
+        return $this->nodeId;
     }
 
     /** @return array<Node> */
