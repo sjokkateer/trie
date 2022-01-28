@@ -1,0 +1,13 @@
+{
+    "name": "sjokkateer/trie",
+    "autoload": {
+        "psr-4": {
+            "Sjokkateer\\Trie\\": "src/Trie"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
