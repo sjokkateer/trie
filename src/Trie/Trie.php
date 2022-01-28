@@ -4,7 +4,7 @@ namespace Sjokkateer\Trie;
 
 class Trie
 {
-    private RootNode $root;
+    protected RootNode $root;
 
     public function __construct()
     {
