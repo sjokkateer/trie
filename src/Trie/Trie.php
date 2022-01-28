@@ -37,14 +37,14 @@ class Trie
         return new $class($value);
     }
 
-    public function suggestionsFor(string $s): array
+    public function suggestionsFor(string $s, bool $caseSensitive = true): array
     {
         $current = $this->root;
         $str = '';
         $result = [];
 
         foreach (str_split($s) as $c) {
-            $current = $current->getNode($c);
+            $current = $current->getNode($c, $caseSensitive);
 
             if ($current === null) return $result;
 

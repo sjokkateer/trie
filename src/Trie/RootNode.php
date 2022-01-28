@@ -26,13 +26,19 @@ class RootNode
         return $this->nodes;
     }
 
-    public function getNode(string $value): ?Node
+    public function getNode(string $value, bool $caseSensitive = true): ?Node
     {
-        $value = strtolower($value);
+        $fn = static fn (string $val, string $other): bool => $val == $other;
 
-        if (!key_exists($value, $this->nodes)) return null;
+        if ($caseSensitive == false) {
+            $fn = static fn (string $val, string $other): bool => strtolower($val) == strtolower($other);
+        }
 
-        return $this->nodes[$value];
+        foreach ($this->getNodes() as $node) {
+            if ($fn($node->getValue(), $value)) return $node;
+        }
+
+        return null;
     }
 
     public function add(Node $node)

@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 final class TrieTest extends TestCase
 {
-    public function testWordSuggestions(): void
+    public function testWordSuggestionsCaseSensitive(): void
     {
         $wordOne = 'Okayeg';
         $wordTwo = 'OkayChamp';
@@ -16,6 +16,21 @@ final class TrieTest extends TestCase
 
         $actualSuggestions = $trie->suggestionsFor('Okay');
         $expectedSuggestions = [$wordOne, $wordTwo];
+
+        $this->assertEquals($expectedSuggestions, $actualSuggestions);
+    }
+
+    public function testWordSuggestionsCaseInsensitive(): void
+    {
+        $wordOne = 'Okayeg';
+        $wordTwo = 'OkayChamp';
+        $trie = new Trie;
+
+        $trie->addWord($wordOne);
+        $trie->addWord($wordTwo);
+
+        $actualSuggestions = $trie->suggestionsFor('okayc', false);
+        $expectedSuggestions = [$wordTwo];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
     }
