@@ -11,6 +11,13 @@ class Trie
         $this->root = new RootNode;
     }
 
+    public function addWords(array $words): void
+    {
+        foreach ($words as $word) {
+            $this->addWord($word);
+        }
+    }
+
     public function addWord(string $word): void
     {
         $strlen = strlen($word);
