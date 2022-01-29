@@ -60,7 +60,7 @@ class Trie
 
         $this->suggest($current, '', $result);
 
-        return array_map(fn ($subStr) => $str . $subStr, $result);
+        return array_map(static fn ($subStr) => $str . $subStr, $result);
     }
 
     private function suggest(Node $current, string $subStr, array &$result): void
