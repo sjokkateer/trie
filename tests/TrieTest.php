@@ -84,16 +84,43 @@ final class TrieTest extends TestCase
 
     public function testWordSuggestionsGivenSuperSetWordOfExistingWordExpectedNoMatchesReturned(): void
     {
-        $wordOne = 'Okayeg';
-        $wordTwo = 'OkayChamp';
-
         $trie = new Trie;
-        $trie->addWord($wordOne);
-        $trie->addWord($wordTwo);
+        $trie->addWords(['Okayeg', 'OkayChamp']);
 
         $actualSuggestions = $trie->suggestionsFor('OkayChampions');
         $expectedSuggestions = [];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
+    }
+
+    public function testExistsOnExistingWordExpectedTrueReturned(): void
+    {
+        $trie = new Trie;
+        $word = 'Okayeg';
+        $trie->addWords([$word, 'OkayChamp']);
+
+        $exists = $trie->exists($word);
+
+        $this->assertTrue($exists);
+    }
+
+    public function testExistsOnNonExistingWordExpectedFalseReturned(): void
+    {
+        $trie = new Trie;
+        $trie->addWords(['Okayeg', 'OkayChamp']);
+
+        $exists = $trie->exists('SomeOtherString');
+
+        $this->assertFalse($exists);
+    }
+
+    public function testExistsGivenCaseInsensitiveOnExistingWordExpectedTrueReturned(): void
+    {
+        $trie = new Trie;
+        $trie->addWords(['Okayeg', 'OkayChamp']);
+
+        $exists = $trie->exists('okayeg', false);
+
+        $this->assertTrue($exists);
     }
 }

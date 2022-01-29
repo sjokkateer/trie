@@ -35,7 +35,7 @@ $suggestions = $trie->suggestionsFor('doc');
     [2] => doctorKick
 )
 ```
-The `Trie::suggestionsFor` is case sensitive by default. Thus, asking for suggestions for `'okay'` on the example results in an empty array:
+The `Trie::suggestionsFor` method is case sensitive by default. Thus, asking for suggestions for `'okay'` on the example results in an empty array:
 ```php
 (
 )
@@ -53,3 +53,10 @@ $suggestions = $trie->suggestionsFor('okay', false);
 )
 ```
 Thus, all words starting with `'okay'`, whether characters are upper or lower cased.
+
+The user can also test if a word exists within the trie through `Trie::exists` which similarly to the other method accepts a flag for case sensitivity.
+
+```php
+$trie->exists('okayeg', false);
+```
+Which based on the example returns `true`.
