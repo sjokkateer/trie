@@ -62,10 +62,8 @@ class Trie
             $result[] = $subStr;
         }
 
-        if ($current->getNodes() != []) {
-            foreach ($current->getNodes() as $child) {
-                $this->suggest($child, $subStr . $child->getValue(), $result);
-            }
+        foreach ($current->getNodes() as $child) {
+            $this->suggest($child, $subStr . $child->getValue(), $result);
         }
     }
 }

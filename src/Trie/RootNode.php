@@ -41,10 +41,12 @@ class RootNode
         return null;
     }
 
-    public function add(Node $node)
+    public function add(Node $node): void
     {
-        if (!key_exists($node->getValue(), $this->nodes)) {
-            $this->nodes[strtolower($node->getValue())] = $node;
+        foreach ($this->nodes as $currentNode) {
+            if ($currentNode->getValue() == $node->getValue()) return;
         }
+
+        $this->nodes[] = $node;
     }
 }
