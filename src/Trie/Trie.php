@@ -44,14 +44,14 @@ class Trie
         return new $class($value);
     }
 
-    public function suggestionsFor(string $prefix): array
+    public function suggestionsFor(string $prefix, int $mode = Mode::CASE_SENSITIVE): array
     {
         $current = $this->root;
         $str = '';
         $result = [];
 
         foreach (str_split($prefix) as $c) {
-            $current = $current->getNode($c);
+            $current = $current->getNode($c, $mode);
 
             if ($current === null) return $result;
 
@@ -74,7 +74,7 @@ class Trie
         }
     }
 
-    public function exists(string $word): bool
+    public function exists(string $word, int $mode = Mode::CASE_SENSITIVE): bool
     {
         $strlen = strlen($word);
         $lastIndex = $strlen - 1;
@@ -82,7 +82,7 @@ class Trie
         $current = $this->root;
 
         for ($i = 0; $i < $strlen; $i++) {
-            $current = $current->getNode($word[$i]);
+            $current = $current->getNode($word[$i], $mode);
 
             if ($current === null) break;
 
