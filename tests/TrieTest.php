@@ -2,6 +2,8 @@
 
 use Sjokkateer\Trie\Trie;
 use PHPUnit\Framework\TestCase;
+use Sjokkateer\Trie\Node;
+use Sjokkateer\Trie\RootNode;
 
 final class TrieTest extends TestCase
 {
@@ -33,7 +35,7 @@ final class TrieTest extends TestCase
 
         $this->trie->addWords([$wordTwo, $wordOne]);
 
-        $actualSuggestions = $this->trie->suggestionsFor('okayc', false);
+        $actualSuggestions = $this->trie->suggestionsFor('okayc');
         $expectedSuggestions = [$wordTwo];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
@@ -86,7 +88,7 @@ final class TrieTest extends TestCase
         $existingWord = 'Okayeg';
         $this->trie->addWords([$existingWord, 'OkayChamp']);
 
-        $exists = $this->trie->exists(strtolower($existingWord), false);
+        $exists = $this->trie->exists(strtolower($existingWord));
 
         $this->assertTrue($exists);
     }

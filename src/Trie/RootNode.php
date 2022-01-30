@@ -26,27 +26,21 @@ class RootNode
         return $this->nodes;
     }
 
-    public function getNode(string $value, bool $caseSensitive = true): ?Node
+    public function getNode(string $value): ?Node
     {
-        $fn = static fn (string $val, string $other): bool => $val == $other;
+        if (key_exists($value, $this->nodes)) return $this->nodes[$value];
 
-        if ($caseSensitive == false) {
-            $fn = static fn (string $val, string $other): bool => strtolower($val) == strtolower($other);
-        }
+        $other = ctype_lower($value) ? strtoupper($value) : strtolower($value);
 
-        foreach ($this->getNodes() as $node) {
-            if ($fn($node->getValue(), $value)) return $node;
-        }
+        if (key_exists($other, $this->nodes)) return $this->nodes[$other];
 
         return null;
     }
 
     public function add(Node $node): void
     {
-        foreach ($this->nodes as $currentNode) {
-            if ($currentNode->getValue() == $node->getValue()) return;
-        }
+        if (key_exists($node->getValue(), $this->nodes)) return;
 
-        $this->nodes[] = $node;
+        $this->nodes[$node->getValue()] = $node;
     }
 }
