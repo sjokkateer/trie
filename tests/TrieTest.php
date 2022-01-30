@@ -5,121 +5,88 @@ use PHPUnit\Framework\TestCase;
 
 final class TrieTest extends TestCase
 {
-    public function testWordSuggestionsCaseSensitive(): void
+    private Trie $trie;
+
+    protected function setUp(): void
     {
-        $wordOne = 'Okayeg';
-        $wordTwo = 'OkayChamp';
-        $trie = new Trie;
-
-        $trie->addWord($wordOne);
-        $trie->addWord($wordTwo);
-
-        $actualSuggestions = $trie->suggestionsFor('Okay');
-        $expectedSuggestions = [$wordOne, $wordTwo];
-
-        $this->assertEquals($expectedSuggestions, $actualSuggestions);
+        parent::setUp();
+        $this->trie = new Trie;
     }
 
-    public function testWordSuggestionsCaseInsensitive(): void
+    public function testSuggestionsForGivenExistingPrefixAndCaseSensitiveExpectedMultipleSuggestionsReturned(): void
     {
-        $wordOne = 'Okayeg';
-        $wordTwo = 'OkayChamp';
-        $trie = new Trie;
-
-        $trie->addWord($wordOne);
-        $trie->addWord($wordTwo);
-
-        $actualSuggestions = $trie->suggestionsFor('okayc', false);
-        $expectedSuggestions = [$wordTwo];
-
-        $this->assertEquals($expectedSuggestions, $actualSuggestions);
-    }
-
-    public function testWordSuggestionsMultipleChildrenOfChmatchesExpectedAllSuggestionsReturned(): void
-    {
-        $words = ['Okay', 'Okayeg', 'OkayChamp', 'OkayChamps', 'OkayChampions', 'OkayDude'];
+        $wordsStartingWithOkay = ['Okay', 'Okayeg', 'OkayChamp', 'OkayChamps', 'OkayChampions', 'OkayDude'];
         $nonMatchingWords = ['Some', 'Garbage'];
 
-        $trie = new Trie;
+        $this->trie->addWords([...$wordsStartingWithOkay, ...$nonMatchingWords]);
 
-        foreach ([...$words, ...$nonMatchingWords] as $word) {
-            $trie->addWord($word);
-        }
-
-        $actualSuggestions = $trie->suggestionsFor('Okay');
-        $expectedSuggestions = $words;
+        $actualSuggestions = $this->trie->suggestionsFor('Okay');
+        $expectedSuggestions = $wordsStartingWithOkay;
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
     }
 
-    public function testWordSuggestionsGivenNoMatchingWordExpectedEmptyArrayReturned(): void
+    public function testSuggestionsForGivenExistingPrefixAndCaseInsensitiveExpectedSingleSuggestionReturned(): void
     {
         $wordOne = 'Okayeg';
         $wordTwo = 'OkayChamp';
 
-        $trie = new Trie;
-        $trie->addWord($wordOne);
-        $trie->addWord($wordTwo);
+        $this->trie->addWords([$wordTwo, $wordOne]);
 
-        $actualSuggestions = $trie->suggestionsFor('Some');
-        $expectedSuggestions = [];
-
-        $this->assertEquals($expectedSuggestions, $actualSuggestions);
-    }
-
-    public function testWordSuggestionsGivenOneMatch(): void
-    {
-        $wordOne = 'Okayeg';
-        $wordTwo = 'OkayChamp';
-
-        $trie = new Trie;
-        $trie->addWord($wordOne);
-        $trie->addWord($wordTwo);
-
-        $actualSuggestions = $trie->suggestionsFor('OkayC');
+        $actualSuggestions = $this->trie->suggestionsFor('okayc', false);
         $expectedSuggestions = [$wordTwo];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
     }
 
-    public function testWordSuggestionsGivenSuperSetWordOfExistingWordExpectedNoMatchesReturned(): void
+    /** @dataProvider nonExistingPrefixes */
+    public function testSuggestionsForGivenNonExistingPrefixAndCaseSensitiveExpectedNoSuggestionsReturned(string $nonExistingPrefix): void
     {
-        $trie = new Trie;
-        $trie->addWords(['Okayeg', 'OkayChamp']);
+        $wordOne = 'Okayeg';
+        $wordTwo = 'OkayChamp';
 
-        $actualSuggestions = $trie->suggestionsFor('OkayChampions');
+        $this->trie->addWords([$wordOne, $wordTwo]);
+
+        $actualSuggestions = $this->trie->suggestionsFor($nonExistingPrefix);
         $expectedSuggestions = [];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
     }
 
-    public function testExistsOnExistingWordExpectedTrueReturned(): void
+    public function nonExistingPrefixes(): array
     {
-        $trie = new Trie;
-        $word = 'Okayeg';
-        $trie->addWords([$word, 'OkayChamp']);
+        return [
+            'Empty string' => [''],
+            'Prefix not existing' => ['Some'],
+            'Prefix longer than existing word' => ['OkayChampions'],
+        ];
+    }
 
-        $exists = $trie->exists($word);
+    public function testExistsGivenAnExistingWordExpectedTrueReturned(): void
+    {
+        $existingWord = 'Okayeg';
+        $this->trie->addWords([$existingWord, 'OkayChamp']);
+
+        $exists = $this->trie->exists($existingWord);
 
         $this->assertTrue($exists);
     }
 
-    public function testExistsOnNonExistingWordExpectedFalseReturned(): void
+    public function testExistsGivenANonExistingWordExpectedFalseReturned(): void
     {
-        $trie = new Trie;
-        $trie->addWords(['Okayeg', 'OkayChamp']);
+        $this->trie->addWords(['Okayeg', 'OkayChamp']);
 
-        $exists = $trie->exists('SomeOtherString');
+        $exists = $this->trie->exists('SomeOtherString');
 
         $this->assertFalse($exists);
     }
 
-    public function testExistsGivenCaseInsensitiveOnExistingWordExpectedTrueReturned(): void
+    public function testExistsGivenAnExistingWordAndCaseInsensitiveExpectedTrueReturned(): void
     {
-        $trie = new Trie;
-        $trie->addWords(['Okayeg', 'OkayChamp']);
+        $existingWord = 'Okayeg';
+        $this->trie->addWords([$existingWord, 'OkayChamp']);
 
-        $exists = $trie->exists('okayeg', false);
+        $exists = $this->trie->exists(strtolower($existingWord), false);
 
         $this->assertTrue($exists);
     }
