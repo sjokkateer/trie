@@ -1,6 +1,6 @@
 # Trie
 ## Usage
-The usage example is based on [BetterTTV](https://betterttv.com/) emotes, through which each emote available for a particular channel is added to the trie. A client can then obtain suggestions for a particular prefix much like an auto complete feature.
+The usage example is based on [BetterTTV](https://betterttv.com/) emotes, through which each emote of a particular channel is added to the trie. A user can then obtain suggestions for a particular prefix much like an auto complete feature.
 
 A different use case could be a directory with files, each file in the directory gets added to a trie and suggestions are obtained for a file starting with some prefix.
 
@@ -23,9 +23,9 @@ $trie->addWord('doctorKick');
   <img src="https://github.com/sjokkateer/trie/blob/main/example_trie.png" />
 </p>
 
-Asking the trie for suggestions for a particular prefix:
+Asking the trie for suggestions (case sensitive) for a particular prefix:
 ```php
-$suggestions = $trie->suggestionsFor('doc');
+$suggestions = $trie->caseSensitiveSuggestionsFor('doc');
 ```
 `$suggestions` will now hold the following words:
 ```php
@@ -35,14 +35,9 @@ $suggestions = $trie->suggestionsFor('doc');
     [2] => doctorKick
 )
 ```
-The `Trie::suggestionsFor` method is case sensitive by default. Thus, asking for suggestions for `'okay'` on the example results in an empty array:
+Similarly, a case insensitive search for suggestions can be applyed:
 ```php
-(
-)
-```
-To apply case insensitive search a boolean flag can be given as second argument to the method:
-```php
-$suggestions = $trie->suggestionsFor('okay', Mode::CASE_INSENSITIVE);
+$suggestions = $trie->caseInsensitiveSuggestionsFor('okay');
 ```
 `$suggestions` will now hold the following words:
 ```php
@@ -54,9 +49,9 @@ $suggestions = $trie->suggestionsFor('okay', Mode::CASE_INSENSITIVE);
 ```
 Thus, all words starting with `'okay'`, whether characters are upper or lower cased.
 
-The user can also test if a word exists within the trie through `Trie::exists` which similarly to the other method accepts a flag for case sensitivity.
+The user can also test if a word exists within the trie through `Trie::exists` which searches for an exact match.
 
 ```php
-$trie->exists('okayeg', Mode::CASE_INSENSITIVE);
+$trie->exists('okayeg');
 ```
-Which based on the example returns `true`.
+Which based on the example returns `false`.

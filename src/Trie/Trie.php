@@ -44,23 +44,23 @@ class Trie
         return new $class($value);
     }
 
-    public function suggestionsFor(string $prefix, int $mode = Mode::CASE_SENSITIVE): array
+    public function caseSensitiveSuggestionsFor(string $prefix): array
     {
         $current = $this->root;
         $str = '';
         $result = [];
 
         foreach (str_split($prefix) as $c) {
-            $current = $current->getNode($c, $mode);
+            $current = $current->getNode($c);
 
             if ($current === null) return $result;
 
             $str .= $current->getValue();
         }
 
-        $this->suggest($current, '', $result);
+        $this->suggest($current, $prefix, $result);
 
-        return array_map(static fn ($subStr) => $str . $subStr, $result);
+        return $result;
     }
 
     private function suggest(Node $current, string $subStr, array &$result): void
@@ -74,7 +74,44 @@ class Trie
         }
     }
 
-    public function exists(string $word, int $mode = Mode::CASE_SENSITIVE): bool
+    public function caseInsensitiveSuggestionsFor(string $prefix): array
+    {
+        $subPrefixes = $this->getSubPrefixes($prefix);
+        $result = [];
+
+        foreach ($subPrefixes as $subPrefix => $node) {
+            $this->suggest($node, $subPrefix, $result);
+        }
+
+        return $result;
+    }
+
+    private function getSubPrefixes(string $prefix): array
+    {
+        $subPrefixes = ['' => $this->root];
+
+        foreach (str_split($prefix) as $c) {
+            $lower = strtolower($c);
+            $upper = strtoupper($c);
+
+            foreach ($subPrefixes as $subPrefix => $current) {
+                unset($subPrefixes[$subPrefix]);
+
+                $lowerNode = $current->getNode($lower);
+                $upperNode = $current->getNode($upper);
+
+                foreach ([$lowerNode, $upperNode] as $node) {
+                    if ($node === null) continue;
+
+                    $subPrefixes[$subPrefix . $node->getValue()] = $node;
+                }
+            }
+        }
+
+        return $subPrefixes;
+    }
+
+    public function exists(string $word): bool
     {
         $strlen = strlen($word);
         $lastIndex = $strlen - 1;
@@ -82,7 +119,7 @@ class Trie
         $current = $this->root;
 
         for ($i = 0; $i < $strlen; $i++) {
-            $current = $current->getNode($word[$i], $mode);
+            $current = $current->getNode($word[$i]);
 
             if ($current === null) break;
 
