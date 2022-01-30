@@ -42,7 +42,7 @@ The `Trie::suggestionsFor` method is case sensitive by default. Thus, asking for
 ```
 To apply case insensitive search a boolean flag can be given as second argument to the method:
 ```php
-$suggestions = $trie->suggestionsFor('okay', false);
+$suggestions = $trie->suggestionsFor('okay', Mode::CASE_INSENSITIVE);
 ```
 `$suggestions` will now hold the following words:
 ```php
@@ -57,6 +57,6 @@ Thus, all words starting with `'okay'`, whether characters are upper or lower ca
 The user can also test if a word exists within the trie through `Trie::exists` which similarly to the other method accepts a flag for case sensitivity.
 
 ```php
-$trie->exists('okayeg', false);
+$trie->exists('okayeg', Mode::CASE_INSENSITIVE);
 ```
 Which based on the example returns `true`.
