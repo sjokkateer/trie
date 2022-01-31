@@ -4,11 +4,15 @@ namespace Sjokkateer\Trie;
 
 class Trie
 {
+    protected NodeFactory $factory;
     protected RootNode $root;
 
-    public function __construct()
+    public function __construct(?NodeFactory $factory = null)
     {
-        $this->root = new RootNode;
+        if ($factory === null) $factory = new DefaultFactory;
+
+        $this->factory = $factory;
+        $this->root = $this->factory->createRootNode();
     }
 
     public function getRoot(): RootNode
@@ -28,7 +32,7 @@ class Trie
         $strlen = strlen($word);
         $lastIndex = $strlen - 1;
 
-        $current = $this->root;
+        $current = $this->getRoot();
 
         for ($i = 0; $i < $strlen; $i++) {
             $char = $word[$i];
@@ -43,9 +47,8 @@ class Trie
 
     private function createNewNode(string $value, bool $isLastIndex): Node
     {
-        $class = Node::class;
-        if ($isLastIndex) $class = TerminationNode::class;
+        if ($isLastIndex) return $this->factory->createTerminationNode($value);
 
-        return new $class($value);
+        return $this->factory->createNode($value);
     }
 }
