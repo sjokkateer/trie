@@ -2,6 +2,9 @@
 
 use Sjokkateer\Trie\Trie;
 use PHPUnit\Framework\TestCase;
+use Sjokkateer\Trie\Procedures\CaseInsensitive;
+use Sjokkateer\Trie\Procedures\CaseSensitive;
+use Sjokkateer\Trie\Procedures\Exists;
 
 final class TrieTest extends TestCase
 {
@@ -20,7 +23,7 @@ final class TrieTest extends TestCase
 
         $this->trie->addWords([...$wordsStartingWithOkay, ...$nonMatchingWords]);
 
-        $actualSuggestions = $this->trie->caseSensitiveSuggestionsFor('Okay');
+        $actualSuggestions = (new CaseSensitive)('Okay', $this->trie);
         $expectedSuggestions = $wordsStartingWithOkay;
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
@@ -33,7 +36,7 @@ final class TrieTest extends TestCase
 
         $this->trie->addWords([$wordTwo, $wordOne]);
 
-        $actualSuggestions = $this->trie->caseInsensitiveSuggestionsFor('okayc');
+        $actualSuggestions = (new CaseInsensitive)('okayc', $this->trie);
         $expectedSuggestions = [$wordTwo];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
@@ -45,7 +48,7 @@ final class TrieTest extends TestCase
 
         $this->trie->addWords($words);
 
-        $actualSuggestions = $this->trie->caseInsensitiveSuggestionsFor('okayeg');
+        $actualSuggestions = (new CaseInsensitive)('okayeg', $this->trie);
 
         foreach ($words as $word) {
             $this->assertContains($word, $actualSuggestions);
@@ -60,7 +63,7 @@ final class TrieTest extends TestCase
 
         $this->trie->addWords([$wordOne, $wordTwo]);
 
-        $actualSuggestions = $this->trie->caseSensitiveSuggestionsFor($nonExistingPrefix);
+        $actualSuggestions = (new CaseSensitive)($nonExistingPrefix, $this->trie);
         $expectedSuggestions = [];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
@@ -83,7 +86,7 @@ final class TrieTest extends TestCase
 
         $this->trie->addWords([$wordOne, $wordTwo]);
 
-        $actualSuggestions = $this->trie->caseInsensitiveSuggestionsFor($nonExistingPrefix);
+        $actualSuggestions = (new CaseInsensitive)($nonExistingPrefix, $this->trie);
         $expectedSuggestions = [];
 
         $this->assertEquals($expectedSuggestions, $actualSuggestions);
@@ -94,7 +97,7 @@ final class TrieTest extends TestCase
         $existingWord = 'Okayeg';
         $this->trie->addWords([$existingWord, 'OkayChamp']);
 
-        $exists = $this->trie->exists($existingWord);
+        $exists = (new Exists)($existingWord, $this->trie);
 
         $this->assertTrue($exists);
     }
@@ -103,7 +106,7 @@ final class TrieTest extends TestCase
     {
         $this->trie->addWords(['Okay', 'Okayeg', 'OkayChamp']);
 
-        $exists = $this->trie->exists('okayeg');
+        $exists = (new Exists)('okayeg', $this->trie);
 
         $this->assertFalse($exists);
     }
