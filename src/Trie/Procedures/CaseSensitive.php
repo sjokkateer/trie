@@ -20,7 +20,7 @@ class CaseSensitive extends AbstractSuggestions
             $str .= $current->getValue();
         }
 
-        $this->suggest($current, $prefix, $result);
+        $this->suggest($current, $str, $result);
 
         return $result;
     }
