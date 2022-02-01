@@ -23,9 +23,11 @@ $trie->addWord('doctorKick');
   <img src="https://github.com/sjokkateer/trie/blob/main/example_trie.png" />
 </p>
 
-Asking the trie for suggestions (case sensitive) for a particular prefix:
+Obtaining suggestions (case sensitive) for a particular prefix:
 ```php
-$suggestions = $trie->caseSensitiveSuggestionsFor('doc');
+use Sjokkateer\Trie\Procedures\CaseSensitive;
+
+$suggestions = (new CaseSensitive)('doc', $trie);
 ```
 `$suggestions` will now hold the following words:
 ```php
@@ -35,9 +37,11 @@ $suggestions = $trie->caseSensitiveSuggestionsFor('doc');
     [2] => doctorKick
 )
 ```
-Similarly, a case insensitive search for suggestions can be applyed:
+Similarly, a case insensitive search for suggestions can be applied:
 ```php
-$suggestions = $trie->caseInsensitiveSuggestionsFor('okay');
+use Sjokkateer\Trie\Procedures\CaseInsensitive;
+
+$suggestions = (new CaseInsensitive)('okay', $trie);
 ```
 `$suggestions` will now hold the following words:
 ```php
@@ -49,9 +53,10 @@ $suggestions = $trie->caseInsensitiveSuggestionsFor('okay');
 ```
 Thus, all words starting with `'okay'`, whether characters are upper or lower cased.
 
-The user can also test if a word exists within the trie through `Trie::exists` which searches for an exact match.
-
+The user can also test if a word exists within the trie through the `Exists::class` which searches for an exact match.
 ```php
-$trie->exists('okayeg');
+use Sjokkateer\Trie\Procedures\Exists;
+
+(new Exists)('okayeg', $trie);
 ```
 Which based on the example returns `false`.
